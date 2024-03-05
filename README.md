@@ -1,20 +1,20 @@
 # Small Reddit Corpus as a Network
 
-This project explored how a corpus from a discussion forum might be explored as a network. I chose a small Reddit corpus for this purpose. The small Reddit corpus presents a sampling of 100 highly active subreddits from 2018 gathered from Pushshift.io and has open source through ConvoKit (at a minimum).
+This project explored how a corpus from a discussion forum might be explored as a network. I chose a small Reddit corpus for this purpose. The small Reddit corpus presents a sampling of 100 highly active subreddits from 2018 gathered from Pushshift.io and has open source access through ConvoKit (at a minimum).
 
 As a social network, Reddit presents a discussion forum-based structure with membership to many communities. It is a structure other social networks use, so the purpose here was to explore how turning a post into multiple conversations opens up research questions into community and well-being.
 
 The structure of this network follows:
-- Each top-level comment in a post is a conversation thread without a link back to a topic node.
-- Latent meaning: engaged user participation; note that the conceptualization of information propagation or diffusion is somewhat different here than one might expect of a social network. Users replying in multiple subreddits still act as an information bridge that could affect community aspects like conversational tone and norms. The extent to which this is true of bridges is under research using this network structure. 
+- Each top-level comment in a post is a conversation thread without a link back to a topic node. This conversation definition makes the network unipartite with user comments spanning threads and therefore subreddits.
+- Latent meaning: engaged user participation; note that the conceptualization of information propagation or diffusion is somewhat different here than one might expect of a social network. Users replying in multiple subreddits still act as an information bridge that could affect community aspects like conversational tone and norms. The extent to which this is true of bridges is under research using this network structure.
 - Nodes: users
 - Edges: reply-to
 
 ## Structure
 
-- The python notebook presents some code and exploration while `convo_structure_parsing.py` is functionality to reproduce the network file.
+- The python notebook presents some code and exploration while `convo_structure_parsing.py` exists to reproduce the network file.
 - `reddit_small_corpus_network.gml.gz` is a compressed `.gml` network file.
-- `reddit_small_corpus_network_card.json` is a concise summary of the network.
+- `network_card.json` is a concise summary of the network.
 
 ## Licenses and disclaimers
 
