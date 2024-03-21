@@ -52,11 +52,8 @@ def get_subreddit_speakers(corpus: Corpus) -> tuple[dict, dict]:
     return (subreddit_users, user_subbredits)
 
 
-def parse_reddit_convo_structure(corpus: Corpus, use_digraph=False) -> nx.MultiDiGraph:
-    """Parse a structured Corpus dataset into a network.
-
-    Args
-    use_digraph: parallel edges become single weighted edges"""
+def parse_reddit_convo_structure(corpus: Corpus) -> nx.MultiDiGraph:
+    """Parse a structured Corpus dataset into a network."""
 
     convo_graph = nx.MultiDiGraph()
     deleted_speaker_id = 0
@@ -137,3 +134,69 @@ def two_convo_sample(corpus: Corpus) -> tuple[Corpus, nx.MultiDiGraph]:
 
     G = parse_reddit_convo_structure(new_corpus)
     return (new_corpus, G)
+
+
+def parse_reddit_convo_structure_digraph(corpus: Corpus) -> nx.DiGraph:
+    """Parse a structured Corpus dataset into a weighted network.
+
+    Note: edges represent accumulated weight, so we lose the ability to keep all
+    utterance information.
+    TODO: Some thought has to go into representing this info via proxy edge and
+    node attributes.
+    """
+    convo_graph = nx.DiGraph()
+    deleted_speaker_id = 0
+    # Node attribute later that needs updating as we fix deleted speakers
+    subreddit_users, user_subbredits = get_subreddit_speakers(corpus)
+
+    # starting from utterances and replies, construct edges,
+    # which will initialize sepakers as nodes
+    for convo in corpus.iter_conversations():
+        sub = convo.retrieve_meta('subreddit')
+        from_speaker_weights = {x: 0 for x in convo.get_speaker_ids()}
+
+        if not check_conversation_integrity(convo):
+            continue
+
+        convo_paths = []
+        for path in convo.get_root_to_leaf_paths():
+            convo_paths.append([utt.id for utt in path])
+
+        for path in convo_paths:
+            # magic number 2 skips the first utterance because it's the post itself
+            for utt_id in path[2:]:
+                from_speaker = change_deleted_speaker_id(
+                    convo.get_utterance(utt_id).speaker.id,
+                    deleted_speaker_id
+                )
+                to_speaker = change_deleted_speaker_id(
+                    convo.get_utterance(path[path.index(utt_id)-1]).speaker.id,
+                    deleted_speaker_id
+                )
+                # Add new user ID to user_subreddits and edge weight tracking
+                if from_speaker not in user_subbredits:
+                    user_subbredits[from_speaker] = [sub]
+                    from_speaker_weights[from_speaker] = 0
+                from_speaker_weights[from_speaker] += 1
+
+                # Add edges and edge attributes
+                convo_graph.add_edge(
+                    from_speaker,
+                    to_speaker,
+                    weight=from_speaker_weights[from_speaker]
+                )
+
+        deleted_speaker_id += 1
+
+    # Add node attributes (this will not add "[deleted]" or isolated nodes--submitters who
+    # have 0 comments reflected in this corpus)
+    for s in corpus.iter_speakers():
+        # check if s is not a node
+        if s.id not in convo_graph.nodes:
+            continue
+        # set existing node attributes
+        convo_graph.nodes[s.id]['num_comments'] = s.meta['num_comments']
+        convo_graph.nodes[s.id]['num_posts'] = s.meta['num_posts']
+        convo_graph.nodes[s.id]['subreddits'] = user_subbredits[s.id]
+
+    return convo_graph

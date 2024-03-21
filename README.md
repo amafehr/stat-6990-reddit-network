@@ -31,7 +31,7 @@ The content of posts has not been filtered for profanity or offensive references
 - This is a work in progress.
 - The current implementation is specific to Reddit datasets loaded using ConvoKit.
 - Some shorthand variable names refer to object types: "convo" for Conversation, "utt" for Utterance.
-- The graph type is a MultiDiGraph, useful for representing multiple replies between the same users. The corpus can also be represented in a DiGraph where the number of replies between 2 unique users is represented in an edge weight (opt for `use_digraph=True` in `convo_structure_parsing.py`).
+- The graph type is a MultiDiGraph, useful for representing multiple replies between the same users. The corpus can also be represented in a DiGraph where the number of replies between 2 unique users is instead an edge weight (opt for the digraph function). This approach loses most utterance information but may be useful for some research questions if some variables can be captured as proxies for edge and node attributes.
 
 I am making the following assumptions:
 - Each top level comment within a post is represented as a conversation, with
