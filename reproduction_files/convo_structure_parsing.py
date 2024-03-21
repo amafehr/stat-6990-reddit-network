@@ -25,15 +25,48 @@ def change_deleted_speaker_id(speaker_id: str, deleted_speaker_id: int) -> str:
     return speaker_id
 
 
-def parse_reddit_convo_structure(corpus: Corpus) -> nx.DiGraph:
-    """Parse a structured Corpus dataset into a network."""
+def get_subreddit_speakers(corpus: Corpus) -> tuple[dict, dict]:
+    """Returns 1) speakers who participated in a subreddit by commenting and
+    2) a speaker's list of subreddits.
 
-    convo_graph = nx.DiGraph()
+    Note: speaker names with 'bot' and '[deleted]' should be handled before this
+    data alone can be informative.
+    """
+    # A subreddit's speakers
+    subreddit_users = {}
+
+    for conv in corpus.iter_conversations():
+        # get speakers in conversation
+        speakers = conv.get_speaker_ids()
+        subreddit = conv.retrieve_meta('subreddit')
+        if subreddit not in subreddit_users:
+            subreddit_users[subreddit] = set()
+        subreddit_users[subreddit].update(speakers)
+
+    # A speaker's subreddits
+    user_subbredits = {}
+    for sub, speakers in subreddit_users.items():
+        for id in speakers:
+            user_subbredits.setdefault(id, []).append(sub)
+
+    return (subreddit_users, user_subbredits)
+
+
+def parse_reddit_convo_structure(corpus: Corpus, use_digraph=False) -> nx.MultiDiGraph:
+    """Parse a structured Corpus dataset into a network.
+
+    Args
+    use_digraph: parallel edges become single weighted edges"""
+
+    convo_graph = nx.MultiDiGraph()
     deleted_speaker_id = 0
+    # Node attribute later that needs updating as we fix deleted speakers
+    subreddit_users, user_subbredits = get_subreddit_speakers(corpus)
 
     # starting from utterances and replies, construct edges,
     # which will initialize sepakers as nodes
     for convo in corpus.iter_conversations():
+        sub = convo.retrieve_meta('subreddit')
 
         if not check_conversation_integrity(convo):
             continue
@@ -57,6 +90,7 @@ def parse_reddit_convo_structure(corpus: Corpus) -> nx.DiGraph:
                 convo_graph.add_edge(
                     from_speaker,
                     to_speaker,
+                    key=utt_id,
                     convo_id=convo.id,
                     utt_id=utt_id,
                     utt_text=convo.get_utterance(utt_id).text,
@@ -64,10 +98,13 @@ def parse_reddit_convo_structure(corpus: Corpus) -> nx.DiGraph:
                     utt_timestamp=convo.get_utterance(utt_id).timestamp,
                     utt_score=convo.get_utterance(utt_id).meta['score']
                 )
+                # Add new user ID to user_subreddits
+                if from_speaker not in user_subbredits:
+                    user_subbredits[from_speaker] = [sub]
 
         deleted_speaker_id += 1
 
-    # Add node attributes (this will not add isolated nodes--submitters who
+    # Add node attributes (this will not add "[deleted]" or isolated nodes--submitters who
     # have 0 comments reflected in this corpus)
     for s in corpus.iter_speakers():
         # check if s is not a node
@@ -76,11 +113,12 @@ def parse_reddit_convo_structure(corpus: Corpus) -> nx.DiGraph:
         # set existing node attributes
         convo_graph.nodes[s.id]['num_comments'] = s.meta['num_comments']
         convo_graph.nodes[s.id]['num_posts'] = s.meta['num_posts']
+        convo_graph.nodes[s.id]['subreddits'] = user_subbredits[s.id]
 
     return convo_graph
 
 
-def two_convo_sample(corpus: Corpus) -> tuple[Corpus, nx.DiGraph]:
+def two_convo_sample(corpus: Corpus) -> tuple[Corpus, nx.MultiDiGraph]:
     """Parse a specific sample of two conversations from a structured Reddit
     Corpus dataset into a new Corpus and a network.
 
@@ -92,6 +130,7 @@ def two_convo_sample(corpus: Corpus) -> tuple[Corpus, nx.DiGraph]:
     conv2 = corpus.get_conversation('9gthts')
 
     # Combine conversations into a list of Utterance objects
+    # (this small example loses the Conversation object type but retains all other types)
     test_list_utterances = list(conv.iter_utterances()) + list(conv2.iter_utterances())
     # Create a new Corpus object
     new_corpus = Corpus(utterances=test_list_utterances)

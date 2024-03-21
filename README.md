@@ -6,7 +6,7 @@ As a social network, Reddit presents a discussion forum-based structure with mem
 
 The structure of this network follows:
 - Each top-level comment in a post is a conversation thread without a link back to a topic node. This conversation definition makes the network unipartite with user comments spanning threads and therefore subreddits.
-- Latent meaning: engaged user participation; note that the conceptualization of information propagation or diffusion is somewhat different here than one might expect of a social network. Users replying in multiple subreddits still act as an information bridge that could affect community aspects like conversational tone and norms. The extent to which this is true of bridges is under research using this network structure.
+- Latent meaning: engaged user participation; the conceptualization of information propagation or diffusion is somewhat different here than one might expect of a social network. Users replying in multiple subreddits still act as an information bridge that could affect community aspects like conversational tone and norms. The extent to which this is true of bridges is under research using this network structure.
 - Nodes: users
 - Edges: reply-to
 
@@ -31,6 +31,7 @@ The content of posts has not been filtered for profanity or offensive references
 - This is a work in progress.
 - The current implementation is specific to Reddit datasets loaded using ConvoKit.
 - Some shorthand variable names refer to object types: "convo" for Conversation, "utt" for Utterance.
+- The graph type is a MultiDiGraph, useful for representing multiple replies between the same users. The corpus can also be represented in a DiGraph where the number of replies between 2 unique users is represented in an edge weight (opt for `use_digraph=True` in `convo_structure_parsing.py`).
 
 I am making the following assumptions:
 - Each top level comment within a post is represented as a conversation, with
