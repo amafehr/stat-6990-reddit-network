@@ -97,4 +97,4 @@ def two_convo_sample(corpus: Corpus) -> tuple[Corpus, nx.DiGraph]:
     new_corpus = Corpus(utterances=test_list_utterances)
 
     G = parse_reddit_convo_structure(new_corpus)
-    return (Corpus, G)
+    return (new_corpus, G)

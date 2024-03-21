@@ -24,7 +24,7 @@ The content of posts has not been filtered for profanity or offensive references
 
 ## Resources
 
-[ConvoKit](https://github.com/CornellNLP/ConvoKit/blob/master/examples/Introduction_to_ConvoKit.ipynb)
+[ConvoKit](https://github.com/CornellNLP/ConvoKit/blob/master/examples/Introduction_to_ConvoKit.ipynb)<br>
 [Reddit Corpus (small)](https://convokit.cornell.edu/documentation/reddit-small.html)
 
 ## Notes:
