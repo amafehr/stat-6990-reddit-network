@@ -78,3 +78,23 @@ def parse_reddit_convo_structure(corpus: Corpus) -> nx.DiGraph:
         convo_graph.nodes[s.id]['num_posts'] = s.meta['num_posts']
 
     return convo_graph
+
+
+def two_convo_sample(corpus: Corpus) -> tuple[Corpus, nx.DiGraph]:
+    """Parse a specific sample of two conversations from a structured Reddit
+    Corpus dataset into a new Corpus and a network.
+
+    Note: this sample has 2 conversations sharing at least 1 user for the
+    purposes of validation and tests. "nathan8999" is the user in common.
+    """
+
+    conv = corpus.get_conversation('9fio59')
+    conv2 = corpus.get_conversation('9gthts')
+
+    # Combine conversations into a list of Utterance objects
+    test_list_utterances = list(conv.iter_utterances()) + list(conv2.iter_utterances())
+    # Create a new Corpus object
+    new_corpus = Corpus(utterances=test_list_utterances)
+
+    G = parse_reddit_convo_structure(new_corpus)
+    return (Corpus, G)
