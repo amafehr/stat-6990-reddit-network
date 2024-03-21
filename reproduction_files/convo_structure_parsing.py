@@ -85,7 +85,7 @@ def two_convo_sample(corpus: Corpus) -> tuple[Corpus, nx.DiGraph]:
     Corpus dataset into a new Corpus and a network.
 
     Note: this sample has 2 conversations sharing at least 1 user for the
-    purposes of validation and tests. "nathan8999" is the user in common.
+    purposes of validation and tests.
     """
 
     conv = corpus.get_conversation('9fio59')
