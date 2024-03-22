@@ -13,8 +13,9 @@ The structure of this network follows:
 ## Structure
 
 - The python notebook presents some code and exploration while `convo_structure_parsing.py` exists to reproduce the network file.
-- `reddit_small_corpus_network.gml.gz` is a compressed `.gml` network file.
-- `network_card.json` is a concise summary of the network.
+- The network data is provided as both a multi-graph and a digraph to allow for different research questions to be explored. You will find separate data files and network cards labeled as such (the filename below woth `*` for the network type)
+    - `reddit_small_corpus_network_*.gml.gz` is a compressed `.gml` network file.
+    - The network card `network_card_*.json` is a concise summary of the network.
 
 ## Licenses and disclaimers
 
@@ -31,7 +32,7 @@ The content of posts has not been filtered for profanity or offensive references
 - This is a work in progress.
 - The current implementation is specific to Reddit datasets loaded using ConvoKit.
 - Some shorthand variable names refer to object types: "convo" for Conversation, "utt" for Utterance.
-- The graph type is a MultiDiGraph, useful for representing multiple replies between the same users. The corpus can also be represented in a DiGraph where the number of replies between 2 unique users is instead an edge weight (opt for the digraph function). This approach loses most utterance information but may be useful for some research questions if some variables can be captured as proxies for edge and node attributes.
+- The main graph type is a MultiDiGraph, useful for representing multiple replies between the same users (parallel edges). The corpus can also be represented in a DiGraph where the number of replies between 2 unique users is instead an edge weight (opt for the `digraph` method). This approach loses most utterance information but may be useful for some research questions if variables can be captured as proxies for edge and node attributes.
 
 I am making the following assumptions:
 - Each top level comment within a post is represented as a conversation, with
