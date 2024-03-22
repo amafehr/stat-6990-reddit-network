@@ -1,11 +1,11 @@
 {
     "overall": {
-        "Name": "Small Reddit Corpus Network",
+        "Name": "",
         "Kind": "Directed, weighted",
-        "Nodes are": "Users (Speaker ID)",
-        "Links are": "Replies from one user to another",
+        "Nodes are": "",
+        "Links are": "",
         "Link weights are": "",
-        "Considerations": "This corpus is a sample of highly active subreddits from 2018"
+        "Considerations": ""
     },
     "structure": {
         "Number of nodes": 121215,
@@ -25,13 +25,13 @@
         "Assortativity (degree)": -0.04767020476165646
     },
     "metainfo": {
-        "Node metadata": "Number of user posts and comments from user, subreddits participated in",
-        "Link metadata": "weight (number of replies from one user to another)",
-        "Date of creation": "source data: 2018, network data: 2024",
-        "Data generating process": "The corpus was downloaded from Cornell's ConvoKit and processed with NetworkX.",
-        "Ethics": "n/a",
-        "Funding": "None",
-        "Citation": "Pushshift.io (2018) and ConvoKit (Chang et al., 2020)",
-        "Access": "https://convokit.cornell.edu/documentation/reddit-small.html#"
+        "Node metadata": "",
+        "Link metadata": "",
+        "Date of creation": "",
+        "Data generating process": "",
+        "Ethics": "",
+        "Funding": "",
+        "Citation": "",
+        "Access": ""
     }
 }

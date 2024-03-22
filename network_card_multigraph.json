@@ -1,0 +1,36 @@
+{
+    "overall": {
+        "Name": "Small Reddit Corpus Network",
+        "Kind": "Directed multigraph, unweighted",
+        "Nodes are": "Users (Speaker ID)",
+        "Links are": "Replies from one user to another (key: utterance ID)",
+        "Link weights are": "",
+        "Considerations": "This corpus is a sample of highly active subreddits from 2018"
+    },
+    "structure": {
+        "Number of nodes": 121215,
+        "Number of links": 278846,
+        "--- Bidirectional links": "38.7%",
+        "Degree (in/out)": [
+            "2.30042 [0, 560]",
+            "Distributions summarized with average [min, max]."
+        ],
+        "Degree": [
+            "4.60085 [1, 1305]",
+            "Undirected."
+        ],
+        "Clustering": "",
+        "Connected": "Disconnected",
+        "Assortativity (degree)": 0.60589638195721
+    },
+    "metainfo": {
+        "Node metadata": "Number of user posts and comments from user, subreddits participated in",
+        "Link metadata": "Conversation ID, Utterance ID, text, Speaker ID, UNIX timestamp, and upvote score",
+        "Date of creation": "source data: 2018, network data: 2024",
+        "Data generating process": "The corpus was downloaded from Cornell's ConvoKit and processed with NetworkX.",
+        "Ethics": "n/a",
+        "Funding": "None",
+        "Citation": "Pushshift.io (2018) and ConvoKit (Chang et al., 2020)",
+        "Access": "https://convokit.cornell.edu/documentation/reddit-small.html#"
+    }
+}
