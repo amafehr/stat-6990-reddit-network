@@ -25,6 +25,7 @@ def change_deleted_speaker_id(speaker_id: str, deleted_speaker_id: int) -> str:
     return speaker_id
 
 
+# TODO: investigate and fix artifact being added to user's list
 def get_subreddit_speakers(corpus: Corpus) -> tuple[dict, dict]:
     """Returns 1) speakers who participated in a subreddit by commenting and
     2) a speaker's list of subreddits.
@@ -98,8 +99,9 @@ def parse_reddit_convo_structure(corpus: Corpus) -> nx.MultiDiGraph:
                 # Add new user ID to user_subreddits
                 if from_speaker not in user_subbredits:
                     user_subbredits[from_speaker] = [sub]
-
-        deleted_speaker_id += 1
+            # deleted_speaker_id is uniquely set per branch (top-level comment) in conversation
+            # (unindenting once makes it per entire conversation)
+            deleted_speaker_id += 1
 
     # Add node attributes (this will not add "[deleted]" or isolated nodes--submitters who
     # have 0 comments reflected in this corpus)

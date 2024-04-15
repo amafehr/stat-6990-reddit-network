@@ -9,19 +9,19 @@
     },
     "structure": {
         "Number of nodes": 121215,
-        "Number of links": 278846,
-        "--- Bidirectional links": "38.7%",
+        "Number of links": 305354,
+        "--- Bidirectional links": "35.8%",
         "Degree (in/out)": [
-            "2.30042 [0, 560]",
+            "2.09711 [0, 472]",
             "Distributions summarized with average [min, max]."
         ],
         "Degree": [
-            "4.60085 [1, 1305]",
+            "4.19422 [1, 587]",
             "Undirected."
         ],
         "Clustering": "",
         "Connected": "Disconnected",
-        "Assortativity (degree)": 0.60589638195721
+        "Assortativity (degree)": -0.0005784223404877467
     },
     "metainfo": {
         "Node metadata": "Number of user posts and comments from user, subreddits participated in",
