@@ -17,9 +17,9 @@ The structure of this network follows:
     - `reddit_small_corpus_network_*.gml.gz` is a compressed `.gml` network file.
     - The network card `network_card_*.json` is a concise summary of the network.
 
-## Licenses and disclaimers
+## License and disclaimers
 
-The license applicable to the network data is ODC-BY (see `DATA_LICENSE.txt`). Otherwise the MIT license applies to code in this repository (see `LICENSE.txt`).
+The license applicable to the network data is ODC-BY (see `DATA_LICENSE.txt`).
 
 The content of posts has not been filtered for profanity or offensive references.
 
