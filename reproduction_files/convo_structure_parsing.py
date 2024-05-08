@@ -25,7 +25,6 @@ def change_deleted_speaker_id(speaker_id: str, deleted_speaker_id: int) -> str:
     return speaker_id
 
 
-# TODO: investigate and fix artifact being added to user's list
 def get_subreddit_speakers(corpus: Corpus) -> tuple[dict, dict]:
     """Returns 1) speakers who participated in a subreddit by commenting and
     2) a speaker's list of subreddits.
@@ -47,8 +46,8 @@ def get_subreddit_speakers(corpus: Corpus) -> tuple[dict, dict]:
     # A speaker's subreddits
     user_subbredits = {}
     for sub, speakers in subreddit_users.items():
-        for id in speakers:
-            user_subbredits.setdefault(id, []).append(sub)
+        for iden in speakers:
+            user_subbredits.setdefault(iden, []).append(sub)
 
     return (subreddit_users, user_subbredits)
 
@@ -92,27 +91,35 @@ def parse_reddit_convo_structure(corpus: Corpus) -> nx.MultiDiGraph:
                     convo_id=convo.id,
                     utt_id=utt_id,
                     utt_text=convo.get_utterance(utt_id).text,
-                    utt_speaker=convo.get_utterance(utt_id).speaker.id,
+                    utt_speaker=from_speaker,
                     utt_timestamp=convo.get_utterance(utt_id).timestamp,
                     utt_score=convo.get_utterance(utt_id).meta['score']
                 )
                 # Add new user ID to user_subreddits
                 if from_speaker not in user_subbredits:
                     user_subbredits[from_speaker] = [sub]
+                # add subreddit for each deleted user
+                if sub not in user_subbredits[from_speaker]:
+                    user_subbredits[from_speaker].append(sub)
             # deleted_speaker_id is uniquely set per branch (top-level comment) in conversation
             # (unindenting once makes it per entire conversation)
             deleted_speaker_id += 1
 
-    # Add node attributes (this will not add "[deleted]" or isolated nodes--submitters who
+    # Add node attributes (this will not add isolated nodes--submitters who
     # have 0 comments reflected in this corpus)
-    for s in corpus.iter_speakers():
-        # check if s is not a node
-        if s.id not in convo_graph.nodes:
-            continue
-        # set existing node attributes
-        convo_graph.nodes[s.id]['num_comments'] = s.meta['num_comments']
-        convo_graph.nodes[s.id]['num_posts'] = s.meta['num_posts']
-        convo_graph.nodes[s.id]['subreddits'] = user_subbredits[s.id]
+    # Cannot look up deleted speakers' s.meta['num_comments'],
+    # which is their number of out-edges bc deleted speaker is set per convo
+    all_speakers = {speaker for speaker in corpus.get_speaker_ids()}
+    for node in convo_graph.nodes:
+        try:
+            convo_graph.nodes[node]['subreddits'] = user_subbredits[node]
+        except:
+            convo_graph.nodes[node]['subreddits'] = []
+
+        if node in all_speakers:
+            convo_graph.nodes[node]['num_comments'] = corpus.get_speaker(node).meta['num_comments']
+        else:  # deleted speaker and their num_comments is the number of out-edges
+            convo_graph.nodes[node]['num_comments'] = convo_graph.out_degree(node)
 
     return convo_graph
 
@@ -122,9 +129,9 @@ def two_convo_sample(corpus: Corpus) -> tuple[Corpus, nx.MultiDiGraph]:
     Corpus dataset into a new Corpus and a network.
 
     Note: this sample has 2 conversations sharing at least 1 user for the
-    purposes of validation and tests.
+    purposes of validation and tests. This transformation destorys meta data the
+    original Conversations objects contained.
     """
-
     conv = corpus.get_conversation('9fio59')
     conv2 = corpus.get_conversation('9gthts')
 
@@ -179,6 +186,9 @@ def parse_reddit_convo_structure_digraph(corpus: Corpus) -> nx.DiGraph:
                 if from_speaker not in user_subbredits:
                     user_subbredits[from_speaker] = [sub]
                     from_speaker_weights[from_speaker] = 0
+                # add subreddit for each deleted user
+                if sub not in user_subbredits[from_speaker]:
+                    user_subbredits[from_speaker].append(sub)
                 from_speaker_weights[from_speaker] += 1
 
                 # Add edges and edge attributes
@@ -187,18 +197,24 @@ def parse_reddit_convo_structure_digraph(corpus: Corpus) -> nx.DiGraph:
                     to_speaker,
                     weight=from_speaker_weights[from_speaker]
                 )
+            # deleted_speaker_id is uniquely set per branch (top-level comment) in conversation
+            # (unindenting once makes it per entire conversation)
+            deleted_speaker_id += 1
 
-        deleted_speaker_id += 1
-
-    # Add node attributes (this will not add "[deleted]" or isolated nodes--submitters who
+    # Add node attributes (this will not add isolated nodes--submitters who
     # have 0 comments reflected in this corpus)
-    for s in corpus.iter_speakers():
-        # check if s is not a node
-        if s.id not in convo_graph.nodes:
-            continue
-        # set existing node attributes
-        convo_graph.nodes[s.id]['num_comments'] = s.meta['num_comments']
-        convo_graph.nodes[s.id]['num_posts'] = s.meta['num_posts']
-        convo_graph.nodes[s.id]['subreddits'] = user_subbredits[s.id]
+    # Cannot look up deleted speakers' s.meta['num_comments'],
+    # which is their number of out-edges bc deleted speaker is set per convo
+    all_speakers = {speaker for speaker in corpus.get_speaker_ids()}
+    for node in convo_graph.nodes:
+        try:
+            convo_graph.nodes[node]['subreddits'] = user_subbredits[node]
+        except:
+            convo_graph.nodes[node]['subreddits'] = []
+
+        if node in all_speakers:
+            convo_graph.nodes[node]['num_comments'] = corpus.get_speaker(node).meta['num_comments']
+        else:  # deleted speaker and their num_comments is the number of out-edges
+            convo_graph.nodes[node]['num_comments'] = convo_graph.out_degree(node)
 
     return convo_graph

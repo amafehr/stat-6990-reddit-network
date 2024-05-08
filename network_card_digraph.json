@@ -8,21 +8,21 @@
         "Considerations": "This corpus is a sample of highly active subreddits from 2018"
     },
     "structure": {
-        "Number of nodes": 121215,
-        "Number of links": "212678 (1087 self-loops)",
-        "--- Bidirectional links": "19.6%",
+        "Number of nodes": 145607,
+        "Number of links": "240729 (5049 self-loops)",
+        "--- Bidirectional links": "18.6%",
         "Degree (in/out)": [
-            "1.75455 [0, 448]",
+            "1.65328 [0, 466]",
             "Distributions summarized with average [min, max]."
         ],
         "Degree": [
-            "3.5091 [1, 449]",
+            "3.30656 [1, 584]",
             "Undirected.",
             "Distributions summarized with average [min, max]."
         ],
-        "Clustering": 0.03439699479781352,
+        "Clustering": 0.024087390175290904,
         "Connected": "Disconnected",
-        "Assortativity (degree)": -0.04767020476165646
+        "Assortativity (degree)": -0.03762813690311812
     },
     "metainfo": {
         "Node metadata": "Number of user posts and comments from user, subreddits participated in",
